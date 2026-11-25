@@ -1,0 +1,59 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit crime' if crime else 'Add crime' }}{% endblock %}
+{% block content %}
+<h1>{{ 'Edit crime ' ~ crime.case_number if crime else 'Add crime' }}</h1>
+
+<form class="panel crime-form" method="post">
+  <input type="hidden" name="csrf" value="{{ csrf_token() }}">
+
+  <label>Case number *
+    <input name="case_number" value="{{ form.get('case_number') or '' }}" maxlength="16" required>
+  </label>
+  <label>Date *
+    <input type="date" name="date" value="{{ form.get('date') or '' }}" required>
+  </label>
+  <label class="span-2">Crime type (IUCR) *
+    <select name="iucr_code" required>
+      <option value="">Choose...</option>
+      {% for i in options.iucr %}
+      <option value="{{ i.iucr_code }}" {{ 'selected' if form.get('iucr_code') == i.iucr_code }}>{{ i.primary_type }}: {{ i.description }} ({{ i.iucr_code }})</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label class="span-2">Block *
+    <input name="block" value="{{ form.get('block') or '' }}" maxlength="64" placeholder="071XX S MORGAN ST" required>
+  </label>
+  <label>Location description
+    <input name="location_desc" value="{{ form.get('location_desc') or '' }}" maxlength="64" placeholder="RESIDENCE">
+  </label>
+  <label>FBI code
+    <input name="fbi_code" value="{{ form.get('fbi_code') or '' }}" maxlength="3" placeholder="06">
+  </label>
+  <label>Community
+    <select name="community_code">
+      <option value="">None</option>
+      {% for c in options.communities %}
+      <option value="{{ c.community_code }}" {{ 'selected' if form.get('community_code') | string == c.community_code | string }}>{{ c.community_name }}</option>
+      {% endfor %}
+    </select>
+  </label>
+  <label>Beat
+    <input name="beat_num" value="{{ form.get('beat_num') or '' }}" inputmode="numeric">
+  </label>
+  <label>District
+    <input name="district_code" value="{{ form.get('district_code') or '' }}" inputmode="numeric">
+  </label>
+  <label>Ward
+    <input name="ward_no" value="{{ form.get('ward_no') or '' }}" inputmode="numeric">
+  </label>
+  <div class="checks span-2">
+    <label class="check"><input type="checkbox" name="arrest" value="1" {{ 'checked' if form.get('arrest') in [1, '1'] }}> Arrest made</label>
+    <label class="check"><input type="checkbox" name="domestic" value="1" {{ 'checked' if form.get('domestic') in [1, '1'] }}> Domestic</label>
+  </div>
+
+  <div class="form-buttons span-2">
+    <button type="submit">{{ 'Save changes' if crime else 'Add crime' }}</button>
+    <a class="button secondary" href="{{ url_for('crime_detail', crime_id=crime.id) if crime else url_for('crimes') }}">Cancel</a>
+  </div>
+</form>
+{% endblock %}

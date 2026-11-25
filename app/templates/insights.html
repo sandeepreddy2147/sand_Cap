@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Insights{% endblock %}
+{% block content %}
+<h1>Patrol and prevention insights</h1>
+{% if not ins.recommendations %}
+<div class="panel"><p>No crime records are loaded yet.</p></div>
+{% else %}
+<div class="panel">
+  <h2>Caveats</h2>
+  <ul>{% for n in notes %}<li>{{ n }}</li>{% endfor %}</ul>
+</div>
+<div class="panel">
+  <h2>Recommendations</h2>
+  <ol>{% for r in ins.recommendations %}<li>{{ r }}</li>{% endfor %}</ol>
+</div>
+<div class="panel table-wrap">
+  <h2>Near-term alerts: {{ ins.alerts.start }} to {{ ins.alerts.end }}</h2>
+  <form method="get" action="{{ url_for('insights_page') }}">
+    <label>Window (days) <input type="number" name="days" min="1" max="90" value="{{ ins.window_days }}"></label>
+    <button type="submit">Update</button>
+  </form>
+  <table class="data">
+    <thead><tr><th>Beat</th><th class="num">District</th><th class="num">Incidents</th><th>Main type</th></tr></thead>
+    <tbody>
+    {% for b in ins.alerts.beats %}
+      <tr><td>{{ b.beat_num }}</td><td class="num">{{ b.district_code }}</td><td class="num">{{ b.crimes }}</td><td>{{ b.top_type }}</td></tr>
+    {% else %}
+      <tr><td colspan="4">No beat has 2 or more incidents in this window.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+<div class="panel table-wrap">
+  <h2>High-crime beats and safety perimeters</h2>
+  <table class="data">
+    <thead><tr><th>Beat</th><th class="num">District</th><th class="num">Records</th><th>Centre (lat, lon)</th><th class="num">Radius (m)</th></tr></thead>
+    <tbody>
+    {% for b in ins.hotspot_beats %}
+      <tr>
+        <td>{{ b.beat_num }}</td><td class="num">{{ b.district_code }}</td><td class="num">{{ b.crimes }}</td>
+        <td>{% if b.perimeter %}{{ b.perimeter.center_lat }}, {{ b.perimeter.center_lon }}{% else %}n/a{% endif %}</td>
+        <td class="num">{{ b.perimeter.radius_m if b.perimeter else 'n/a' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  <p>The radius holds 80% of the beat's incidents around their centre.</p>
+</div>
+<div class="panel table-wrap">
+  <h2>Communities needing patrols</h2>
+  <table class="data">
+    <thead><tr><th>Community</th><th class="num">Records</th><th class="num">Per 10k residents</th></tr></thead>
+    <tbody>
+    {% for r in ins.communities_by_count %}
+      <tr><td><a href="{{ url_for('crimes', community=r.code) }}">{{ r.name }}</a></td><td class="num">{{ r.crimes }}</td><td class="num">{{ r.per_10k }}</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

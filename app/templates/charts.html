@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Charts{% endblock %}
+{% block content %}
+<h1>Charts</h1>
+
+<nav class="jump">
+  {% for s in sections %}<a href="#{{ s.key }}">{{ s.title }}</a>{% endfor %}
+</nav>
+
+{% for s in sections %}
+<section class="chart-section" id="{{ s.key }}">
+  <h2>{{ s.title }}</h2>
+  {% if s.charts %}
+  <div class="chart-grid">
+    {% for c in s.charts %}
+    <figure class="panel chart">
+      <a href="{{ url_for('chart_image', use_case=s.key, filename=c.file) }}" target="_blank" rel="noopener">
+        <img src="{{ url_for('chart_image', use_case=s.key, filename=c.file) }}" alt="{{ c.title }}" loading="lazy">
+      </a>
+      <figcaption>{{ c.title }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+  {% else %}
+  <p class="muted">No charts yet. Run the notebook for this use case to create them.</p>
+  {% endif %}
+
+  {% if s.findings %}
+  <details class="panel findings">
+    <summary>Findings</summary>
+    {% for f in s.findings %}
+    <h3>{{ f.heading }}</h3>
+    {% for p in f.text %}<p>{{ p }}</p>{% endfor %}
+    {% endfor %}
+  </details>
+  {% endif %}
+</section>
+{% endfor %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Communities{% endblock %}
+{% block content %}
+<h1>Communities</h1>
+{% set top = rows | map(attribute='crimes') | max %}
+<div class="panel table-wrap">
+  <table class="data">
+    <thead>
+      <tr><th>Community</th><th class="num">Population</th><th class="wide">Crimes</th><th class="num">Arrests</th><th class="num">Arrest rate</th><th class="num">Crimes per 10k people</th></tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td><a href="{{ url_for('crimes', community=r.community_code) }}">{{ r.community_name }}</a></td>
+        <td class="num">{{ '{:,}'.format(r.population) if r.population else '' }}</td>
+        <td class="wide">
+          <div class="bar"><span style="width: {{ r.crimes | pct(top) }}%"></span></div>
+          <span class="bar-value">{{ r.crimes }}</span>
+        </td>
+        <td class="num">{{ r.arrests }}</td>
+        <td class="num">{{ r.arrests | pct(r.crimes) }}%</td>
+        <td class="num">{{ '%.2f' | format(10000 * r.crimes / r.population) if r.population else '' }}</td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

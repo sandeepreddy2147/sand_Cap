@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Crimes{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>Crimes</h1>
+  <a class="button" href="{{ url_for('crime_create') }}">+ Add crime</a>
+</div>
+
+<form class="filters" method="get" action="{{ url_for('crimes') }}">
+  <label>Year
+    <select name="year">
+      <option value="">All</option>
+      {% for y in options.years %}<option value="{{ y }}" {{ 'selected' if filters.year == y }}>{{ y }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Crime type
+    <select name="type">
+      <option value="">All</option>
+      {% for t in options.types %}<option value="{{ t }}" {{ 'selected' if filters.type == t }}>{{ t }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Community
+    <select name="community">
+      <option value="">All</option>
+      {% for c in options.communities %}<option value="{{ c.community_code }}" {{ 'selected' if filters.community == c.community_code }}>{{ c.community_name }}</option>{% endfor %}
+    </select>
+  </label>
+  <label>Arrest
+    <select name="arrest">
+      <option value="">All</option>
+      <option value="1" {{ 'selected' if filters.arrest == '1' }}>Yes</option>
+      <option value="0" {{ 'selected' if filters.arrest == '0' }}>No</option>
+    </select>
+  </label>
+  <div class="filter-buttons">
+    <button type="submit">Apply</button>
+    <a class="button secondary" href="{{ url_for('crimes') }}">Reset</a>
+  </div>
+</form>
+
+<p class="muted">{{ total }} crimes found</p>
+
+<div class="panel table-wrap">
+  <table class="data">
+    <thead>
+      <tr><th>Date</th><th>Case</th><th>Type</th><th>Description</th><th>Block</th><th>Location</th><th>Community</th><th>Arrest</th><th>Domestic</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>{{ r.date }}</td>
+        <td><a href="{{ url_for('crime_detail', crime_id=r.id) }}">{{ r.case_number }}</a></td>
+        <td>{{ r.primary_type }}</td>
+        <td>{{ r.description }}</td>
+        <td>{{ r.block }}</td>
+        <td>{{ r.location_desc or '' }}</td>
+        <td>{{ r.community_name or '' }}</td>
+        <td><span class="tag {{ 'yes' if r.arrest else 'no' }}">{{ 'Yes' if r.arrest else 'No' }}</span></td>
+        <td>{{ 'Yes' if r.domestic else 'No' }}</td>
+        <td class="actions">
+          <a href="{{ url_for('crime_detail', crime_id=r.id) }}">View</a>
+          <a href="{{ url_for('crime_edit', crime_id=r.id) }}">Edit</a>
+          <a class="danger-link" href="{{ url_for('crime_delete', crime_id=r.id) }}">Delete</a>
+        </td>
+      </tr>
+    {% else %}
+      <tr><td colspan="10" class="muted">No crimes match these filters.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if pages > 1 %}
+{% set args = {'year': filters.year or '', 'type': filters.type, 'community': filters.community or '', 'arrest': filters.arrest} %}
+<nav class="pager">
+  {% if page > 1 %}<a href="{{ url_for('crimes', page=page - 1, **args) }}">Previous</a>{% endif %}
+  <span>Page {{ page }} of {{ pages }}</span>
+  {% if page < pages %}<a href="{{ url_for('crimes', page=page + 1, **args) }}">Next</a>{% endif %}
+</nav>
+{% endif %}
+{% endblock %}

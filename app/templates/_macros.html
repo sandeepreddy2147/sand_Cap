@@ -1,0 +1,18 @@
+{% macro bar_table(rows, label_title) %}
+{% set top = rows | map(attribute='crimes') | max %}
+<table class="bars">
+  <thead><tr><th>{{ label_title }}</th><th class="wide">Crimes</th><th class="num">Arrests</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr>
+      <td>{{ r.label }}</td>
+      <td class="wide">
+        <div class="bar"><span style="width: {{ r.crimes | pct(top) }}%"></span></div>
+        <span class="bar-value">{{ r.crimes }}</span>
+      </td>
+      <td class="num">{{ r.arrests }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endmacro %}

@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Crime {{ crime.case_number }}{% endblock %}
+{% block content %}
+<h1>Crime {{ crime.case_number }}</h1>
+
+<div class="panel">
+  <dl class="details">
+    <dt>Date</dt><dd>{{ crime.date }}</dd>
+    <dt>Crime type</dt><dd>{{ crime.primary_type }}: {{ crime.description }} ({{ crime.iucr_code }})</dd>
+    <dt>FBI code</dt><dd>{{ crime.fbi_code or '' }}</dd>
+    <dt>Block</dt><dd>{{ crime.block }}</dd>
+    <dt>Location</dt><dd>{{ crime.location_desc or '' }}</dd>
+    <dt>Community</dt><dd>{{ crime.community_name or '' }}</dd>
+    <dt>Beat / District / Ward</dt><dd>{{ crime.beat_num or '-' }} / {{ crime.district_code or '-' }} / {{ crime.ward_no or '-' }}</dd>
+    <dt>Arrest</dt><dd><span class="tag {{ 'yes' if crime.arrest else 'no' }}">{{ 'Yes' if crime.arrest else 'No' }}</span></dd>
+    <dt>Domestic</dt><dd>{{ 'Yes' if crime.domestic else 'No' }}</dd>
+    <dt>Last updated</dt><dd>{{ crime.date_of_update or '' }}</dd>
+  </dl>
+</div>
+
+<div class="form-buttons">
+  <a class="button" href="{{ url_for('crime_edit', crime_id=crime.id) }}">Edit</a>
+  <a class="button danger" href="{{ url_for('crime_delete', crime_id=crime.id) }}">Delete</a>
+  <a class="button secondary" href="{{ url_for('crimes') }}">Back to list</a>
+</div>
+{% endblock %}

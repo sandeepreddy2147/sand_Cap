@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% from "_macros.html" import bar_table %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+<h1>Dashboard</h1>
+
+<section class="cards">
+  <div class="card"><span class="card-label">Crimes</span><span class="card-value">{{ totals.crimes }}</span></div>
+  <div class="card"><span class="card-label">Arrests</span><span class="card-value">{{ totals.arrests }}</span></div>
+  <div class="card"><span class="card-label">Arrest rate</span><span class="card-value">{{ totals.arrests | pct(totals.crimes) }}%</span></div>
+  <div class="card"><span class="card-label">Domestic</span><span class="card-value">{{ totals.domestic }}</span></div>
+</section>
+
+<section class="grid">
+  <div class="panel">
+    <h2>Crimes by year</h2>
+    {{ bar_table(yearly, "Year") }}
+  </div>
+  <div class="panel">
+    <h2>Crimes by day of week</h2>
+    {{ bar_table(weekdays, "Day") }}
+  </div>
+  <div class="panel span-2">
+    <h2>Top 10 crime types</h2>
+    {{ bar_table(types, "Type") }}
+  </div>
+</section>
+{% endblock %}
