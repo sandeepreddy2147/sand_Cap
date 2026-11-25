@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿# Chicago Crime Analytics (final)
 
 | Folder | Content |
@@ -26,3 +27,6 @@ is not running, they use the SQLite file instead. The tables, SQL and views are 
 ## Data note
 The crime file has 498 records, 490 of them from 2016, and its dates have no time of day. Yearly, monthly and hourly
 results describe this sample. The notebooks say so wherever it changes a conclusion.
+=======
+# sand_Cap
+>>>>>>> e6c337b976e5f31f6facf5a7fafcfaae091296cb
